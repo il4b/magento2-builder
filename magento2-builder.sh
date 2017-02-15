@@ -247,12 +247,12 @@ do
     case $option in
         "theme")
             echo
-            echo "You have selected Magento 2 $option Buidler"
+            echo "You have selected Magento 2 $option Builder"
             echo
             buildTheme
             ;;
         "module")
-            echo "You have selected Magento 2 $option Buidler"
+            echo "You have selected Magento 2 $option Builder"
             echo
             buildModule
             ;;
