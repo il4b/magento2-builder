@@ -246,7 +246,7 @@ echo
 echo "This command helps you generate Magento2 theme/module skeleton"
 echo
 echo -e "What would you like to build ?"
-PS3="Please, select you option and press [ENTER]: "
+PS3="Please, select your option and press [ENTER]: "
 select option in "theme" "module"
 do
     case $option in
