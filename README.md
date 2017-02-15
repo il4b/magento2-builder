@@ -1,2 +1,2 @@
-# Magento 2 Theme Builder
-This script helps you generate a Magento 2 theme skeleton
+# Magento 2 Builder
+This command helps you generate Magento2 theme or module skeleton
