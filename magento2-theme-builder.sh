@@ -7,6 +7,7 @@ THEME_FOLDERS=("etc" "media" "web")
 WEB_FOLDERS=("css" "js" "images" "fonts")
 PARENT_THEME_PATH="<parent>Magento/blank</parent>"
 DEFAULT_VIEW_FILE="vendor/magento/theme-frontend-blank/etc/view.xml"
+PREVIEW_FILENAME="preview.jpg"
 
 ROOT_PATH=$(pwd)
 
@@ -98,6 +99,11 @@ createRegistrationFile() {
         );
 EOM
 }
+createFakePreviewFile() {
+    preview_path="$1/media/$PREVIEW_FILENAME"
+    touch $preview_path
+    echo -e "\033[32mCreated\033[0m $preview_path"
+}
 createThemeStructure() {
     # Create vendor directory
     VENDOR_PATH="$ROOT_PATH/$DESIGN_PATH$VENDOR_NAME"
@@ -131,6 +137,10 @@ createThemeStructure() {
 
     # Copy view.xml
     cp $DEFAULT_VIEW_FILE "$THEME_PATH/etc/"
+
+    # Create fake preview.jpg
+    createFakePreviewFile $THEME_PATH
+
     echo
 }
 
@@ -148,4 +158,4 @@ setThemeTitle
 
 # Execute
 createThemeStructure
-printf "Don't forget to copy your preview.jpg in %s\n" "$THEME_PATH/web/media"
+printf "Don't forget to replace the \033[33mpreview.jpg\033[0m in \033[33m%s\033[0m\n" "$THEME_PATH/web/media"
