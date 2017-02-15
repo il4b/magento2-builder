@@ -31,6 +31,15 @@ askUser() {
     eval "$1=$input"
 }
 
+createDirectory() {
+    if [ -d $1 ]; then
+        printf "${C_YELLOW}Skipping${C_RESET} %s\n" $1
+    else
+        mkdir -p $1
+        printf "${C_GREEN}Created${C_RESET} %s\n" $1
+    fi
+}
+
 setMagento2Path() {
     if ! isMagento2; then
         echo -e "${C_RED}$ROOT_PATH is not a Magento 2 project${C_RESET}"
@@ -50,14 +59,6 @@ setMagento2Path() {
     fi
 }
 
-createDirectory() {
-    if [ -d $1 ]; then
-        printf "${C_YELLOW}Skipping${C_RESET} %s\n" $1
-    else
-        mkdir -p $1
-        printf "${C_GREEN}Created${C_RESET} %s\n" $1
-    fi
-}
 createThemeFile() {
     theme_file_path="$1/theme.xml"
     if [ -f $theme_file_path ]; then
@@ -81,6 +82,7 @@ createThemeFile() {
 </theme>
 EOM
 }
+
 createModuleFile() {
     module_file_path="$1/module.xml"
     NAMESPACE=${VENDOR_NAME}_${MODULE_NAME}
@@ -98,6 +100,7 @@ createModuleFile() {
 </config>
 EOM
 }
+
 createRegistrationFile() {
     registration_file_path="$1/registration.php"
     if [ -f $registration_file_path ]; then
@@ -118,6 +121,7 @@ createRegistrationFile() {
         );
 EOM
 }
+
 createModuleRegistrationFile() {
     registration_file_path="$1/registration.php"
     NAMESPACE=${VENDOR_NAME}_${MODULE_NAME}
@@ -139,11 +143,13 @@ createModuleRegistrationFile() {
     );
 EOM
 }
+
 createFakePreviewFile() {
     preview_path="$1/media/$PREVIEW_FILENAME"
     touch $preview_path
     echo -e "${C_GREEN}Created${C_RESET} $preview_path"
 }
+
 createThemeStructure() {
     # Create vendor directory
     VENDOR_PATH="$ROOT_PATH/$DESIGN_PATH$VENDOR_NAME"
@@ -181,6 +187,7 @@ createThemeStructure() {
     # Create fake preview.jpg
     createFakePreviewFile $THEME_PATH
 }
+
 createModuleStructure() {
     # Create vendor directory
     VENDOR_PATH="$ROOT_PATH/$MODULE_PATH$VENDOR_NAME"
@@ -209,6 +216,7 @@ createModuleStructure() {
     echo -e "> Executing ${C_GREEN}$ROOT_PATH/bin/magento setup:upgrade${C_RESET}"
     eval "$ROOT_PATH/bin/magento setup:upgrade"
 }
+
 buildTheme() {
     # Prompt
     setMagento2Path
@@ -230,6 +238,7 @@ buildModule() {
     # Execute
     createModuleStructure
 }
+
 echo
 echo "Magento 2 Theme/Module Builder (1.0.1)"
 echo "======================="
