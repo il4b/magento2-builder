@@ -25,6 +25,12 @@ isMagento2() {
     [ -f "$CONFIG_FILE_PATH" ]
 }
 
+askUser() {
+    echo -e "Enter your ${C_YELLOW}$1${C_RESET} and press [ENTER]: "
+    read input
+    eval "$1=$input"
+}
+
 setMagento2Path() {
     if ! isMagento2; then
         echo -e "${C_RED}$ROOT_PATH is not a Magento 2 project${C_RESET}"
@@ -42,25 +48,6 @@ setMagento2Path() {
             cd $ROOT_PATH
         fi
     fi
-}
-setVendorName() {
-    echo -e "Enter your ${C_YELLOW}vendor_name${C_RESET} and press [ENTER]: "
-    read VENDOR_NAME
-}
-
-setThemeName() {
-    echo -e "Enter your ${C_YELLOW}theme_name${C_RESET} and press [ENTER]: "
-    read THEME_NAME
-}
-
-setModuleName() {
-    echo -e "Enter your ${C_YELLOW}module_name${C_RESET} and press [ENTER]: "
-    read MODULE_NAME
-}
-
-setThemeTitle() {
-    echo -e "Enter your ${C_YELLOW}theme_title${C_RESET} and press [ENTER]: "
-    read THEME_TITLE
 }
 
 createDirectory() {
@@ -225,9 +212,9 @@ createModuleStructure() {
 buildTheme() {
     # Prompt
     setMagento2Path
-    setVendorName
-    setThemeName
-    setThemeTitle
+    askUser "VENDOR_NAME"
+    askUser "THEME_NAME"
+    askUser "THEME_TITLE"
 
     # Execute
     createThemeStructure
@@ -237,9 +224,8 @@ buildTheme() {
 buildModule() {
     # Prompt
     setMagento2Path
-    setVendorName
-    setModuleName
-    setModuleVersion
+    askUser "VENDOR_NAME"
+    askUser "MODULE_NAME"
 
     # Execute
     createModuleStructure
