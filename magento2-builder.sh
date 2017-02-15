@@ -141,12 +141,15 @@ createModuleRegistrationFile() {
     fi
     cat > $registration_file_path <<- EOM
 <?php
-
-\Magento\Framework\Component\ComponentRegistrar::register(
-    \Magento\Framework\Component\ComponentRegistrar::MODULE,
-    '$NAMESPACE',
-    __DIR__
-);
+    /**
+    * Copyright © 2015 Magento. All rights reserved.
+    * See COPYING.txt for license details.
+    */
+    \Magento\Framework\Component\ComponentRegistrar::register(
+        \Magento\Framework\Component\ComponentRegistrar::MODULE,
+        '$NAMESPACE',
+        __DIR__
+    );
 EOM
 }
 createFakePreviewFile() {
