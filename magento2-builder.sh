@@ -1,28 +1,49 @@
 #!/bin/bash
+#
+# This script helps you generate theme/module skeleton
 
+# Define colors
+C_ESC="\033["
+C_GREEN=$C_ESC"32m"
+C_YELLOW=$C_ESC"33m"
+C_RED=$C_ESC"91m"
+C_RESET=$C_ESC"0m"
+
+
+# Define default vars
 CONFIG_FILE_PATH="app/etc/config.php"
 MODULE_PATH="app/code/"
 DESIGN_PATH="app/design/frontend/"
-DO_NOT_DELETE_FILE=".gitkeep"
-THEME_FOLDERS=("etc" "media" "web")
-WEB_FOLDERS=("css" "js" "images" "fonts")
 PARENT_THEME_PATH="<parent>Magento/blank</parent>"
 DEFAULT_VIEW_FILE="vendor/magento/theme-frontend-blank/etc/view.xml"
 PREVIEW_FILENAME="preview.jpg"
-BUILDER_OPTIONS=('theme' 'module')
 DEFAULT_MODULE_VERSION="1.0.0"
 
 ROOT_PATH=$(pwd)
-
 
 isMagento2() {
     [ -f "$CONFIG_FILE_PATH" ]
 }
 
+askUser() {
+    echo -e "Enter your ${C_YELLOW}$1${C_RESET} and press [ENTER]: "
+    read input
+    eval "$1=$input"
+}
+
+createDirectory() {
+    if [ -d $1 ]; then
+        printf "${C_YELLOW}Skipping${C_RESET} %s\n" $1
+    else
+        mkdir -p $1
+        printf "${C_GREEN}Created${C_RESET} %s\n" $1
+    fi
+}
+
 setMagento2Path() {
     if ! isMagento2; then
-        echo -e "\033[91m$ROOT_PATH is not a Magento 2 project\033[0m"
-        echo -e "Please specify a \033[33mMagento 2 path\033[0m and press [ENTER]"
+        echo -e "${C_RED}$ROOT_PATH is not a Magento 2 project${C_RESET}"
+        echo -e "Please specify a ${C_YELLOW}Magento 2 path${C_RESET} and press [ENTER]"
         read ROOT_PATH
         ROOT_PATH="$(pwd)/$ROOT_PATH"
 
@@ -37,40 +58,13 @@ setMagento2Path() {
         fi
     fi
 }
-setVendorName() {
-    echo -e "Enter your \033[33mvendor_name\033[0m and press [ENTER]: "
-    read VENDOR_NAME
-}
 
-setThemeName() {
-    echo -e "Enter your \033[33mtheme_name\033[0m and press [ENTER]: "
-    read THEME_NAME
-}
-
-setModuleName() {
-    echo -e "Enter your \033[33mmodule_name\033[0m and press [ENTER]: "
-    read MODULE_NAME
-}
-
-setThemeTitle() {
-    echo -e "Enter your \033[33mtheme_title\033[0m and press [ENTER]: "
-    read THEME_TITLE
-}
-
-createDirectory() {
-    if [ -d $1 ]; then
-        printf "\033[33mSkipping\033[0m %s\n" $1
-    else
-        mkdir -p $1
-        printf "\033[32mCreated\033[0m %s\n" $1
-    fi
-}
 createThemeFile() {
     theme_file_path="$1/theme.xml"
     if [ -f $theme_file_path ]; then
-        echo -e "\033[33mUpdated\033[0m $theme_file_path"
+        echo -e "${C_YELLOW}Updated${C_RESET} $theme_file_path"
     else
-        echo -e "\033[32mCreated\033[0m $theme_file_path"
+        echo -e "${C_GREEN}Created${C_RESET} $theme_file_path"
     fi
     cat > $theme_file_path <<- EOM
 <!--
@@ -88,13 +82,14 @@ createThemeFile() {
 </theme>
 EOM
 }
+
 createModuleFile() {
     module_file_path="$1/module.xml"
     NAMESPACE=${VENDOR_NAME}_${MODULE_NAME}
     if [ -f $module_file_path ]; then
-        echo -e "\033[33mUpdated\033[0m $module_file_path"
+        echo -e "${C_YELLOW}Updated${C_RESET} $module_file_path"
     else
-        echo -e "\033[32mCreated\033[0m $module_file_path"
+        echo -e "${C_GREEN}Created${C_RESET} $module_file_path"
     fi
     cat > $module_file_path <<- EOM
 <?xml version="1.0"?>
@@ -105,12 +100,13 @@ createModuleFile() {
 </config>
 EOM
 }
+
 createRegistrationFile() {
     registration_file_path="$1/registration.php"
     if [ -f $registration_file_path ]; then
-        echo -e "\033[33mUpdated\033[0m $registration_file_path"
+        echo -e "${C_YELLOW}Updated${C_RESET} $registration_file_path"
     else
-        echo -e "\033[32mCreated\033[0m $registration_file_path"
+        echo -e "${C_GREEN}Created${C_RESET} $registration_file_path"
     fi
     cat > $registration_file_path <<- EOM
  <?php
@@ -125,34 +121,40 @@ createRegistrationFile() {
         );
 EOM
 }
+
 createModuleRegistrationFile() {
     registration_file_path="$1/registration.php"
     NAMESPACE=${VENDOR_NAME}_${MODULE_NAME}
     if [ -f $registration_file_path ]; then
-        echo -e "\033[33mUpdated\033[0m $registration_file_path"
+        echo -e "${C_YELLOW}Updated${C_RESET} $registration_file_path"
     else
-        echo -e "\033[32mCreated\033[0m $registration_file_path"
+        echo -e "${C_GREEN}Created${C_RESET} $registration_file_path"
     fi
     cat > $registration_file_path <<- EOM
 <?php
-
-\Magento\Framework\Component\ComponentRegistrar::register(
-    \Magento\Framework\Component\ComponentRegistrar::MODULE,
-    '$NAMESPACE',
-    __DIR__
-);
+    /**
+    * Copyright © 2015 Magento. All rights reserved.
+    * See COPYING.txt for license details.
+    */
+    \Magento\Framework\Component\ComponentRegistrar::register(
+        \Magento\Framework\Component\ComponentRegistrar::MODULE,
+        '$NAMESPACE',
+        __DIR__
+    );
 EOM
 }
+
 createFakePreviewFile() {
     preview_path="$1/media/$PREVIEW_FILENAME"
     touch $preview_path
-    echo -e "\033[32mCreated\033[0m $preview_path"
+    echo -e "${C_GREEN}Created${C_RESET} $preview_path"
 }
+
 createThemeStructure() {
     # Create vendor directory
     VENDOR_PATH="$ROOT_PATH/$DESIGN_PATH$VENDOR_NAME"
     echo
-    echo -e "> Generating a theme skeleton into \033[32m$VENDOR_PATH\033[0m"
+    echo -e "> Generating a theme skeleton into ${C_GREEN}$VENDOR_PATH${C_RESET}"
     createDirectory $VENDOR_PATH
 
     # Create theme directory
@@ -160,19 +162,19 @@ createThemeStructure() {
     createDirectory $THEME_PATH
 
     # Create theme subdirectories
-    for SUB_DIR in "${THEME_FOLDERS[@]}"
+    for SUB_DIR in "etc" "media" "web"
     do
         createDirectory "$THEME_PATH/$SUB_DIR"
     done
 
     # Create web subdirectories
-    for SUB_DIR in "${WEB_FOLDERS[@]}"
+    for SUB_DIR in "css" "js" "fonts" "images"
     do
         createDirectory "$THEME_PATH/web/$SUB_DIR"
     done
 
     echo
-    echo -e "> Generating declaration theme files into \033[32m$THEME_PATH\033[0m"
+    echo -e "> Generating declaration theme files into ${C_GREEN}$THEME_PATH${C_RESET}"
     # Create theme.xml file
     createThemeFile $THEME_PATH
 
@@ -185,11 +187,12 @@ createThemeStructure() {
     # Create fake preview.jpg
     createFakePreviewFile $THEME_PATH
 }
+
 createModuleStructure() {
     # Create vendor directory
     VENDOR_PATH="$ROOT_PATH/$MODULE_PATH$VENDOR_NAME"
     echo
-    echo -e "> Generating a module skeleton into \033[32m$VENDOR_PATH\033[0m"
+    echo -e "> Generating a module skeleton into ${C_GREEN}$VENDOR_PATH${C_RESET}"
     createDirectory $VENDOR_PATH
 
     # Create module directory
@@ -202,47 +205,49 @@ createModuleStructure() {
 
 
     echo
-    echo -e "> Generating declaration module files into \033[32m$ETC_PATH\033[0m"
+    echo -e "> Generating declaration module files into ${C_GREEN}$ETC_PATH${C_RESET}"
     # Create module.xml file
     createModuleFile $ETC_PATH
 
     # Create registration.php
     createModuleRegistrationFile $MODULE_PATH
 
+    echo
+    echo -e "> Executing ${C_GREEN}$ROOT_PATH/bin/magento setup:upgrade${C_RESET}"
     eval "$ROOT_PATH/bin/magento setup:upgrade"
-    exit
 }
+
 buildTheme() {
     # Prompt
     setMagento2Path
-    setVendorName
-    setThemeName
-    setThemeTitle
+    askUser "VENDOR_NAME"
+    askUser "THEME_NAME"
+    askUser "THEME_TITLE"
 
     # Execute
     createThemeStructure
-    printf "Don't forget to replace the \033[33mpreview.jpg\033[0m in \033[33m%s\033[0m\n" "$THEME_PATH/web/media"
+    printf "Don't forget to replace the ${C_YELLOW}preview.jpg${C_RESET} in ${C_YELLOW}%s${C_RESET}\n" "$THEME_PATH/web/media"
 }
 
 buildModule() {
     # Prompt
     setMagento2Path
-    setVendorName
-    setModuleName
-    setModuleVersion
+    askUser "VENDOR_NAME"
+    askUser "MODULE_NAME"
 
     # Execute
     createModuleStructure
 }
+
 echo
-echo "Magento 2 Builder (1.0.1)"
+echo "Magento 2 Theme/Module Builder (1.0.1)"
 echo "======================="
 echo
-echo "This command helps you generate Magento2 theme or module skeleton"
+echo "This command helps you generate Magento2 theme/module skeleton"
 echo
 echo -e "What would you like to build ?"
-PS3="Please, select you option and press [ENTER]: "
-select option in "${BUILDER_OPTIONS[@]}"
+PS3="Please, select your option and press [ENTER]: "
+select option in "theme" "module"
 do
     case $option in
         "theme")
@@ -260,5 +265,5 @@ do
     esac
     break
 done
-exit
 echo
+exit
