@@ -109,7 +109,7 @@ createRegistrationFile() {
         echo -e "${C_GREEN}Created${C_RESET} $registration_file_path"
     fi
     cat > $registration_file_path <<- EOM
- <?php
+<?php
     /**
     * Copyright © 2015 Magento. All rights reserved.
     * See COPYING.txt for license details.
